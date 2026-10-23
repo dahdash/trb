@@ -1,0 +1,11 @@
+data/raw/
+data/*.db
+data/*.tmp
+*.zip
+__pycache__/
+.venv/
+node_modules/
+.env
+.env.*
+!.env.example
+out/

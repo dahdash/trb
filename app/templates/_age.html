@@ -1,0 +1,9 @@
+{% macro age(iso) -%}
+{%- set d = iso | age_days -%}
+<span class="age {{ 'unknown' if d is none else 'stale' if d > 90 else 'aging' if d > 30 else 'fresh' }}">قیمت به‌روز شده: {{ iso | age }}</span>
+{%- endmacro %}
+{% macro price(p) -%}
+{%- if p.min_price is none %}<em class="unknown">قیمت نامشخص</em>
+{%- elif p.max_price and p.max_price != p.min_price %}{{ p.min_price | fa }} <span class="muted">تا</span> {{ p.max_price | fa }} <small>تومان</small>
+{%- else %}{{ p.min_price | fa }} <small>تومان</small>{% endif -%}
+{%- endmacro %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}پیگیری‌ها · تربچه{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>پیگیری‌ها</h1>
+  <p class="muted">جواب فروشنده‌ها اینجا می‌آید؛ اگر نشد، جایگزین می‌دهیم.</p>
+</section>
+<section class="plan" id="plan" hidden></section>
+<p class="status muted" id="status" aria-live="polite"></p>
+<div class="results" id="list"></div>
+{% endblock %}
+{% block scripts %}<script src="/static/contact.js?v={{ asset_v }}"></script><script src="/static/followups.js?v={{ asset_v }}"></script><script src="/static/plan.js?v={{ asset_v }}"></script>{% endblock %}

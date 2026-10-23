@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/static/radish.svg" type="image/svg+xml">
+  <title>{% block title %}تربچه — دستیار خرید حضوری{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
+  <link rel="stylesheet" href="/static/app.css?v={{ asset_v }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/"><img src="/static/radish.svg" alt="" width="30" height="30"><span>تربچه</span></a>
+    <div class="top-end">
+    <button class="loc-chip" id="locChip" type="button" aria-label="تغییر موقعیت">
+      <svg class="pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="locLabel">موقعیت: نامشخص</span>
+    </button>
+    <a class="fu-btn{{ ' on' if tab == 'followups' }}" href="/followups" aria-label="پیگیری‌ها" title="پیگیری‌ها"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg><b id="fuCount" hidden></b></a>
+    </div>
+  </header>
+
+  <main class="page">{% block content %}{% endblock %}</main>
+
+  <dialog class="sheet" id="locSheet" aria-labelledby="locTitle">
+    <form method="dialog" class="sheet-head">
+      <h2 id="locTitle">کجا هستی؟</h2>
+      <button class="ghost icon" value="close" aria-label="بستن"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </form>
+    <p class="muted small">فقط روی همین دستگاه می‌ماند.</p>
+    <button type="button" class="btn wide" id="locGps"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>موقعیت فعلی من</button>
+    <button type="button" class="ghost wide" id="locMapBtn">انتخاب روی نقشه</button>
+    <div class="pickmap" id="locMap" hidden></div>
+    <button type="button" class="btn wide" id="locMapOk" hidden>همین نقطه</button>
+    <p class="err" id="locErr" hidden></p>
+    <h3>محله‌هایی که فروشگاه دارند</h3>
+    <div class="areas" id="locAreas"></div>
+  </dialog>
+  <script>window.NESHAN_WEB_KEY = {{ neshan_web_key | tojson }};</script>
+  <script src="/static/app.js?v={{ asset_v }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

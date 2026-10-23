@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_age.html" import price, age %}
+{% block title %}{{ p.title ~ ' — ' if p }}فروشنده‌های نزدیک · تربچه{% endblock %}
+{% block content %}
+{% if p %}
+<a class="pmini" href="/p/{{ p.id }}">
+  {% if p.image %}<img src="{{ p.image }}" alt="" loading="lazy">{% endif %}
+  <span><b>{{ p.title }}</b><small class="muted">{{ p.n_shops | fa }} فروشگاه · {{ price(p) }}</small></span>
+</a>
+
+<div class="nmap" id="nmap" aria-label="نقشه‌ی فروشگاه‌ها"></div>
+
+<section class="nfilters" aria-label="فیلترها">
+  <div class="seg" id="radius" role="radiogroup" aria-label="شعاع">
+    <button type="button" class="chip" data-r="1">۱ کیلومتر</button>
+    <button type="button" class="chip on" data-r="3">۳ کیلومتر</button>
+    <button type="button" class="chip" data-r="10">۱۰ کیلومتر</button>
+    <button type="button" class="chip" data-r="0">همه‌ی شهر</button>
+  </div>
+  <div class="seg">
+    <button type="button" class="chip on" data-sort="best" title="تعادل قیمت، زمان رسیدن، باز بودن و تازگی قیمت">پیشنهاد ما</button>
+    <button type="button" class="chip" data-sort="km">نزدیک‌ترین</button>
+    <button type="button" class="chip" data-sort="price">ارزان‌ترین</button>
+    <button type="button" class="chip" id="fOpen" aria-pressed="false">الان باز</button>
+    <button type="button" class="chip" id="fPay" aria-pressed="false">اقساطی</button>
+  </div>
+</section>
+
+<p class="status muted" id="status" aria-live="polite"></p>
+<div class="picks3" id="summary" hidden></div>
+<div class="results" id="results"></div>
+{% else %}
+<section class="hero">
+  <h1>نزدیک من</h1>
+  <p class="muted">اول محصول را انتخاب کن.</p>
+  <a class="btn" href="/">جست‌وجوی محصول</a>
+</section>
+<div class="results" id="picks"></div>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if p %}<script>const PRODUCT = {{ p.id }};</script><script src="/static/contact.js?v={{ asset_v }}"></script><script src="/static/nearby.js?v={{ asset_v }}"></script>{% else %}
+<script>
+  // Products already in the compare tray are the likely next step.
+  const picks = (() => { try { return JSON.parse(localStorage.getItem("cmp") || "[]"); } catch { return []; } })();
+  if (picks.length) document.getElementById("picks").innerHTML = `<h2 class="sub">از فهرست مقایسه‌ات</h2>` +
+    picks.map((p) => `<a class="card pick" href="/nearby?product=${+p.id}">${esc(p.title)}</a>`).join("");
+</script>{% endif %}{% endblock %}

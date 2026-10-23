@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "_age.html" import age %}
+{% block title %}{{ s.name }} — تربچه{% endblock %}
+{% block content %}
+<a class="back muted" href="javascript:history.back()">→ بازگشت</a>
+<article class="card shop">
+  <h1>{{ s.name }}</h1>
+  <div class="meta">
+    {% if s.area %}<span class="tag">{{ s.area }}</span>{% endif %}
+    <span class="tag">{{ s.n_products | fa }} کالا در فهرست</span>
+  </div>
+  {% if not s.real_name %}<p class="note">نام این فروشگاه در داده‌ی مسابقه ساختگی است؛ موقعیت واقعی است. <a href="/about">درباره‌ی داده</a></p>{% endif %}
+  {% set bits = [s.passage, s.floor and ("طبقه " ~ s.floor), s.unit] | select | list %}
+  <div class="where">{% if bits %}<b>{{ bits | join("، ") }}</b>{% endif %}<small class="muted">{{ s.address or "آدرس ثبت نشده" }}</small></div>
+
+  <div class="facts">
+    {% if s.hours.state == "open" %}<span class="hrs open">باز است{% if s.hours.today %} · {{ s.hours.today }}{% endif %}</span>
+    {% elif s.hours.state == "closed" %}<span class="hrs closed">الان بسته{% if s.hours.today and s.hours.today != "امروز تعطیل" %} · امروز {{ s.hours.today }}{% else %} · امروز تعطیل{% endif %}</span>
+    {% else %}<span class="hrs unknown">ساعت کاری اعلام نشده</span>{% endif %}
+    {% for p in s.payments %}<span class="pay {{ 'inp' if p.in_person }}" title="{{ 'برای خرید حضوری اعلام شده' if p.in_person else 'کانال پرداخت مشخص نیست' }}">{{ p.name }}{% if p.in_person %} · حضوری{% endif %}</span>{% endfor %}
+    {% if not s.payments %}<span class="pay unknown">اقساط: نامشخص</span>{% endif %}
+    <span class="pay {{ 'unknown' if s.fast_delivery is none }}">ارسال سریع: {{ "نامشخص" if s.fast_delivery is none else "دارد" if s.fast_delivery else "ندارد" }}</span>
+  </div>
+
+  <div class="actions">
+    {% if s.lat %}<a class="btn" href="https://neshan.org/maps/@{{ s.lat }},{{ s.lon }},17z,0p" target="_blank" rel="noopener">مسیریابی با نشان</a>{% endif %}
+    {% if s.phone %}<a class="btn ghost" href="tel:{{ s.phone }}">تماس · {{ s.phone }}</a>{% endif %}
+    {% if s.link %}<a class="btn ghost" href="{{ s.link }}" target="_blank" rel="noopener">سایت/اینستاگرام</a>{% endif %}
+  </div>
+  {% if s.phone %}<p class="note small">شماره‌های داده‌ی مسابقه نمونه‌اند.</p>{% endif %}
+</article>
+
+<section class="card">
+  <h2>ساعت کاری هفته</h2>
+  <dl class="week">
+    {% for d in s.week %}<div{% if d.today %} class="today"{% endif %}><dt>{{ d.day }}{% if d.today %} (امروز){% endif %}</dt>
+      <dd>{% if d.text %}{{ d.text }}{% else %}<em class="unknown">اعلام نشده</em>{% endif %}</dd></div>{% endfor %}
+  </dl>
+</section>
+
+<section class="card">
+  <h2>کالاهای این فروشگاه</h2>
+  {% if s.categories %}<div class="meta">{% for c, n in s.categories %}<span class="tag">{{ c }} · {{ n | fa }}</span>{% endfor %}</div>{% endif %}
+  <p class="note small">فهرست آگهی‌ها، نه موجودی تأییدشده. تازه‌ترین قیمت‌ها اول آمده‌اند.</p>
+  <ul class="slist">
+    {% for p in s.products %}
+    <li><a href="/p/{{ p.id }}">
+      <span class="thumb">{% if p.image %}<img src="{{ p.image }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}</span>
+      <span class="t">{{ p.title }}</span>
+      <span class="pr">{% if p.price %}{{ p.price | fa }} <small>تومان</small>{% else %}<em class="unknown">قیمت نامشخص</em>{% endif %} {{ age(p.price_at) }}</span>
+    </a></li>
+    {% endfor %}
+  </ul>
+  {% if s.n_products > s.products | length %}<p class="muted small">{{ s.products | length | fa }} کالا از {{ s.n_products | fa }} نمایش داده شد.</p>{% endif %}
+</section>
+{% endblock %}

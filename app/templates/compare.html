@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_age.html" import age, price %}
+{% block title %}مقایسه — تربچه{% endblock %}
+{% block content %}
+<a class="back muted" href="/search">→ بازگشت به جست‌وجو</a>
+<h1>مقایسه محصولات</h1>
+{% set ps = c.products %}
+{% if ps | length < 2 %}
+<div class="card">حداقل دو محصول برای مقایسه لازم است. از نتایج جست‌وجو «+ مقایسه» را بزن.</div>
+{% else %}
+{% if c.mixed %}<p class="note">دسته‌ها فرق دارند؛ مقایسه معنای زیادی ندارد.</p>{% endif %}
+{% if c.verdict %}
+<section class="card verdict">
+  <h2>خلاصه</h2>
+  <ul>{% for v in c.verdict %}{% set p = ps | selectattr("id", "equalto", v.id) | first %}
+    <li><span class="tag on">{{ v.label }}</span> <b>{{ p.title[:60] }}</b> — <span class="muted">{{ v.text }}</span></li>
+  {% endfor %}</ul>
+</section>
+{% endif %}
+{% set nd = c.rows | selectattr("kind", "equalto", "diff") | list | length %}
+<label class="diff-toggle"><input type="checkbox" id="onlyDiff" checked> فقط تفاوت‌ها
+  <span class="muted">({{ nd | fa }} از {{ c.rows | length | fa }} مشخصه؛ بقیه یکسان‌اند یا فقط برای یک محصول ثبت شده‌اند)</span></label>
+<div class="cmp-wrap">
+<table class="cmp-table" style="--n: {{ ps | length }}">
+  <thead><tr><th></th>{% for p in ps %}<th>
+    <a href="/p/{{ p.id }}">{% if p.image %}<img src="{{ p.image }}" alt="" loading="lazy">{% endif %}<span>{{ p.title }}</span></a>
+  </th>{% endfor %}</tr></thead>
+  <tbody>
+    <tr class="key"><th>قیمت</th>{% for p in ps %}<td>{{ price(p) }}<br>{{ age(p.price_at) }}</td>{% endfor %}</tr>
+    <tr class="key"><th>فروشگاه‌ها</th>{% for p in ps %}<td>{{ (p.n_shops or 0) | fa }}</td>{% endfor %}</tr>
+    <tr class="key"><th>گارانتی</th>{% for p in ps %}<td>{% if p.max_warranty %}تا {{ p.max_warranty | fa }} ماه{% else %}<em class="unknown">نامشخص</em>{% endif %}</td>{% endfor %}</tr>
+    <tr class="key"><th></th>{% for p in ps %}<td><a class="btn small" href="/nearby?product={{ p.id }}">📍 فروشنده نزدیک</a></td>{% endfor %}</tr>
+    {% for r in c.rows %}
+    <tr class="{{ r.kind }}"><th>{{ r.key }}</th>
+      {% for v in r["values"] %}<td>{% if v %}{{ v }}{% else %}<em class="unknown">نامشخص</em>{% endif %}</td>{% endfor %}</tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+  const t = document.querySelector(".cmp-table"), cb = document.getElementById("onlyDiff");
+  if (t && cb) { const f = () => t.classList.toggle("only-diff", cb.checked); cb.addEventListener("change", f); f(); }
+</script>
+{% endblock %}

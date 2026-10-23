@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}پنل فروشنده · تربچه{% endblock %}
+{% block content %}
+<section class="hero seller-hero">
+  <span class="demo">نسخه‌ی نمایشی</span>
+  <h1>پنل فروشنده</h1>
+  <p class="muted">پرسش خریدارها؛ جوابت همان لحظه به آن‌ها می‌رسد.</p>
+</section>
+<p class="status muted" id="status" aria-live="polite"></p>
+<div class="results" id="inbox"></div>
+{% endblock %}
+{% block scripts %}<script>const SHOP = {{ shop or 'null' }};</script><script src="/static/contact.js?v={{ asset_v }}"></script><script src="/static/seller.js?v={{ asset_v }}"></script>{% endblock %}

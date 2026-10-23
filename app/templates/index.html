@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>دنبال چه می‌گردی؟</h1>
+  <p class="muted">مدل را با فیلتر و مقایسه پیدا کن.</p>
+  <form class="search" id="searchForm" action="/search" method="get" role="search">
+    <input name="q" id="q" type="search" placeholder="مثلاً هدفون بی سیم یا گوشی سامسونگ A57" autocomplete="off" enterkeyhint="search">
+    <button type="submit" aria-label="جست‌وجو"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  </form>
+  <div class="examples" id="examples">
+    <span class="muted">نمونه:</span>
+    <button type="button" class="chip" data-q="گوشی سامسونگ">گوشی سامسونگ</button>
+    <button type="button" class="chip" data-q="هدفون بی سیم">هدفون بی‌سیم</button>
+    <button type="button" class="chip" data-q="لپ تاپ ایسوس">لپ‌تاپ ایسوس</button>
+    <button type="button" class="chip" data-q="کفش رانینگ">کفش رانینگ</button>
+  </div>
+</section>
+
+<section class="filters" id="filters" hidden>
+  <div class="row">
+    <label class="budget">بودجه (میلیون تومان)
+      <span><input id="min" type="number" inputmode="decimal" min="0" step="any" placeholder="از">
+      <input id="max" type="number" inputmode="decimal" min="0" step="any" placeholder="تا"></span>
+    </label>
+    <label>برند
+      <select id="brand"><option value="">همه</option></select>
+    </label>
+  </div>
+  <div class="cats" id="cats" aria-label="دسته‌بندی"></div>
+</section>
+
+<p class="status muted" id="status" aria-live="polite"></p>
+<div class="results" id="results"></div>
+<button class="ghost more" id="more" type="button" hidden>نتایج بیشتر</button>
+<p class="muted small foot"><a href="/about">درباره‌ی داده: چه می‌دانیم و چه نه</a></p>
+
+<div class="tray" id="tray" hidden>
+  <div class="tray-items" id="trayItems"></div>
+  <a class="btn" id="trayGo" href="/compare">مقایسه</a>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/discover.js?v={{ asset_v }}"></script>{% endblock %}

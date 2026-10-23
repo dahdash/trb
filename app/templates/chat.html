@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="chat">
+  <div class="hello" id="hello">
+    <h1>دنبال چه می‌گردی؟</h1>
+    <p class="muted small">بگو چه لازم داری؛ فروشنده‌ی نزدیک و باز را پیدا می‌کنم.</p>
+  </div>
+  <div class="chathead" id="chathead" hidden>
+    <a class="muted small" href="/search">جست‌وجوی ساده با فیلتر</a>
+    <button type="button" class="ghost small" id="reset">گفت‌وگوی تازه</button>
+  </div>
+  <div class="log" id="log" aria-live="polite"></div>
+  <div class="qchips" id="chips"></div>
+  <form class="composer" id="form" autocomplete="off">
+    <input id="msg" name="msg" maxlength="500" placeholder="مثلاً: شارژر گوشی فوری لازم دارم" aria-label="پیام" required>
+    <button type="button" class="btn ghost" id="mic" aria-label="گفتن با صدا" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <button class="btn" id="send" aria-label="ارسال"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></button>
+  </form>
+  <p class="center small" id="plain"><a class="muted" href="/search">جست‌وجوی ساده با فیلتر</a></p>
+</section>
+{% endblock %}
+{% block scripts %}<script src="/static/contact.js?v={{ asset_v }}"></script><script src="/static/chat.js?v={{ asset_v }}"></script>{% endblock %}

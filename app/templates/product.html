@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "_age.html" import age, price %}
+{% block title %}{{ p.title }} — تربچه{% endblock %}
+{% block content %}
+<a class="back muted" href="javascript:history.back()">→ بازگشت</a>
+<article class="card product">
+  {% if p.images or p.image %}
+  <div class="gallery">{% for src in (p.images or [p.image]) %}<img src="{{ src }}" alt="" onerror="this.remove()">{% endfor %}</div>
+  {% endif %}
+  <h1>{{ p.title }}</h1>
+  <div class="meta">
+    <span class="tag">{{ p.category or "بدون دسته" }}</span>
+    {% if p.brand %}<span class="tag">{{ p.brand }}</span>{% endif %}
+    {% if p.model %}<span class="tag">مدل {{ p.model }}</span>{% endif %}
+  </div>
+  <div class="ptag big"><div class="price">{{ price(p) }}</div>{{ age(p.price_at) }}</div>
+  <dl class="facts">
+    <div><dt>فروشگاه‌ها</dt><dd>{{ (p.n_shops or 0) | fa }}</dd></div>
+    <div><dt>گارانتی</dt><dd>{% if p.max_warranty %}تا {{ p.max_warranty | fa }} ماه{% else %}<em class="unknown">نامشخص</em>{% endif %}</dd></div>
+    <div><dt>بدون قیمت</dt><dd>{{ (p.unpriced or 0) | fa }} آگهی</dd></div>
+  </dl>
+  <p class="note">قیمت آگهی است، نه موجودی تأییدشده؛ قبل از رفتن بپرس.</p>
+  <div class="actions">
+    <a class="btn" href="/nearby?product={{ p.id }}">فروشنده‌های نزدیک من</a>
+    <button type="button" class="ghost" id="addCmp" data-id="{{ p.id }}" data-title="{{ p.title }}">+ مقایسه</button>
+  </div>
+</article>
+
+{% if p.specs %}
+<section class="card specs{% if p.specs | length > 12 %} folded{% endif %}" id="specs">
+  <h2>مشخصات</h2>
+  {% set ns = namespace(i=0) %}
+  {% for sec, items in p.specs | groupby(0) %}
+  <h3{% if ns.i >= 12 %} class="x"{% endif %}>{{ sec }}</h3>
+  <dl>{% for s in items %}<div{% if ns.i >= 12 %} class="x"{% endif %}><dt>{{ s[1] }}</dt><dd>{{ s[2] }}</dd></div>{% set ns.i = ns.i + 1 %}{% endfor %}</dl>
+  {% endfor %}
+  {% if p.specs | length > 12 %}<button type="button" class="ghost more" onclick="this.parentElement.classList.remove('folded')">همهٔ مشخصات ({{ p.specs | length | fa }})</button>{% endif %}
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+  // Add to the same compare tray the search page uses
+  const b = document.getElementById("addCmp");
+  const get = () => { try { return JSON.parse(localStorage.getItem("cmp") || "[]"); } catch { return []; } };
+  const sync = () => { const on = get().some((x) => x.id === +b.dataset.id); b.textContent = on ? "✓ در مقایسه — دیدن" : "+ مقایسه"; };
+  b.addEventListener("click", () => {
+    const t = get(), id = +b.dataset.id;
+    if (t.some((x) => x.id === id)) { location.href = `/compare?ids=${t.map((x) => x.id).join(",")}`; return; }
+    if (t.length >= 4) t.shift();
+    t.push({ id, title: b.dataset.title });
+    try { localStorage.setItem("cmp", JSON.stringify(t)); } catch {}
+    sync();
+  });
+  sync();
+</script>
+{% endblock %}
